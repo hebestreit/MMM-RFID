@@ -2,9 +2,14 @@ Module.register("MMM-RFID", {
     requiresVersion: "2.1.0",
 
     // Default module config.
-    defaults: {},
+    defaults: {
+        // events should be dispatched when tag has been scanned
+        events: {}
+    },
 
-    // Define start sequence.
+    /**
+     * Define start sequence.
+     */
     start: function () {
         Log.info("Starting module: " + this.name);
 
@@ -13,13 +18,37 @@ Module.register("MMM-RFID", {
         });
     },
 
+    /**
+     * Received socket notification and dispatch notification to other modules
+     * @param notification
+     * @param payload
+     */
     socketNotificationReceived: function (notification, payload) {
-        if (notification === "BUTTON_UP") {
-            this.buttonUp(payload.index, payload.duration);
-            this.sendNotification("HIDE_ALERT");
+        if (notification === "RFID_UID") {
+            this.sendNotification("RFID_UID", payload);
         }
-        if (notification === "BUTTON_DOWN") {
-            this.buttonDown(payload.index);
+
+        if (notification === "RFID_DATA") {
+            this.sendNotification("RFID_DATA", payload);
+            this.dispatchEvents(payload.data)
         }
     },
+
+    /**
+     * Dispatch configured events
+     * @param {string} data
+     */
+    dispatchEvents: function (data) {
+        var events = this.config.events[data];
+
+        for (var index in events) {
+            if (!events.hasOwnProperty(index)) {
+                return;
+            }
+            var event = events[index];
+            var notification = Object.keys(event)[0];
+            var payload = event[notification];
+            this.sendNotification(notification, payload);
+        }
+    }
 });

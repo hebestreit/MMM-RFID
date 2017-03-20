@@ -1,8 +1,10 @@
-var mfrc522 = require("rfid.js");
+var mfrc522 = require("./rfid.js");
 
 var NodeHelper = require("node_helper");
 module.exports = NodeHelper.create({
-    // Subclass start method.
+    /**
+     * Method called when module has been started
+     */
     start: function () {
         var self = this;
 
@@ -10,7 +12,11 @@ module.exports = NodeHelper.create({
 
         this.loaded = false;
     },
-    // Subclass socketNotificationReceived received.
+    /**
+     * Received socket notification
+     * @param notification
+     * @param payload
+     */
     socketNotificationReceived: function (notification, payload) {
         if (notification === 'RFID_CONFIG') {
             this.config = payload.config;
@@ -18,19 +24,33 @@ module.exports = NodeHelper.create({
             this.initializeRfid();
         }
     },
+    /**
+     * Initialize rfid module and send socket notification
+     */
     initializeRfid: function () {
+        var self = this;
         var Callback = function () {
             this.onStart = function () {
-                console.log('onStart');
             };
 
             this.onUid = function (uid) {
-                console.log('onUid');
-                console.log(uid);
+                self.sendSocketNotification('RFID_UID', uid);
+            };
+
+            this.onData = function (data) {
+                var string = '';
+                var buf = data.split(',');
+                for (var i in buf) {
+                    var dec = buf[i].trim();
+                    if (dec !== '0') {
+                        string += String.fromCharCode(dec);
+                    }
+                }
+
+                self.sendSocketNotification('RFID_DATA', {data: string});
             };
 
             this.onExit = function () {
-                console.log('onExit');
             };
         };
         mfrc522.start(new Callback());
