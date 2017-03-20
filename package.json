@@ -1,0 +1,33 @@
+{
+  "name": "MMM-RFID",
+  "version": "1.0.0",
+  "description": "Uses rfid reader to scan nfc tags and send notification.",
+  "main": "MMM-RFID.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hebestreit/MMM-RFID.git"
+  },
+  "keywords": [
+    "Magic Mirror",
+    "RFID",
+    "NFC tags",
+    "Modules"
+  ],
+  "author": "Daniel Hebestreit",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hebestreit/MMM-RFID/issues"
+  },
+  "homepage": "https://github.com/hebestreit/MMM-RFID#readme",
+  "scripts": {
+    "postinstall": "node_modules/.bin/electron-rebuild -e ../../node_modules/electron-prebuilt"
+  },
+  "dependencies": {
+    "math-statistics": "latest",
+    "mmm-usonic": "latest",
+    "mmm-gpio": "latest"
+  },
+  "devDependencies": {
+    "electron-rebuild": "^1.2.1"
+  }
+}
