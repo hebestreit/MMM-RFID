@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
+import re
 
 import RPi.GPIO as GPIO
+import sys
+
+from cStringIO import StringIO
+
 import MFRC522
 import signal
 
@@ -54,7 +59,26 @@ while continue_reading:
 
         # Check if authenticated
         if status == MIFAREReader.MI_OK:
+
+            old_stdout = sys.stdout
+            sys.stdout = my_stdout = StringIO()
+
+            # Check to see if it was written
             MIFAREReader.MFRC522_Read(8)
+
+            sys.stdout = old_stdout
+            block = my_stdout.getvalue()
+
+            print "It now looks like this:"
+            match = re.search("^Sector 8 \[(.*)\]$", block)
+            if match:
+                data = match.group(1).split(', ')
+                string = ""
+                for dec in data:
+                    string += chr(int(dec))
+                print string
+            print block
+
             MIFAREReader.MFRC522_StopCrypto1()
         else:
             print "Authentication error"

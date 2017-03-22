@@ -5,7 +5,7 @@ MFRC522.prototype.spawn = require('child_process').spawn;
 MFRC522.prototype.rc522py = null;
 MFRC522.prototype.callback = null;
 MFRC522.prototype.uidRegExp = new RegExp("^UID: ([0-9,]+)");
-MFRC522.prototype.dataBlock8 = new RegExp("^Data Block 8: \\[(.*)\\]");
+MFRC522.prototype.dataBlock8 = new RegExp("^Sector 8 \\[(.*)\\]");
 
 MFRC522.prototype.start = function (callback) {
     // callback

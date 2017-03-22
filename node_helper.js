@@ -43,7 +43,7 @@ module.exports = NodeHelper.create({
                 for (var i in buf) {
                     var dec = buf[i].trim();
                     if (dec !== '0') {
-                        string += String.fromCharCode(dec);
+                        string += String.fromCharCode(parseInt(dec));
                     }
                 }
 
