@@ -28,9 +28,14 @@ module.exports = NodeHelper.create({
      * Initialize rfid module and send socket notification
      */
     initializeRfid: function () {
+        if (this.loaded) {
+            return;
+        }
+
         var self = this;
         var Callback = function () {
             this.onStart = function () {
+                self.loaded = true;
             };
 
             this.onUid = function (uid) {
